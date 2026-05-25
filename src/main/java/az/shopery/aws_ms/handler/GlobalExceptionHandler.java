@@ -1,6 +1,12 @@
 package az.shopery.aws_ms.handler;
 
+import az.shopery.aws_ms.handler.dto.ErrorResponse;
+import az.shopery.aws_ms.handler.exception.FileStorageException;
 import jakarta.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,27 +16,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.util.HtmlUtils;
-
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import tools.jackson.databind.exc.InvalidFormatException;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
-        log.debug("Resource not found: {}", ex.getMessage());
-        return buildErrorResponse(ex, HttpStatus.NOT_FOUND, request);
-    }
-
-    @ExceptionHandler(ApplicationException.class)
-    public ResponseEntity<ErrorResponse> handleBadRequest(Exception ex, HttpServletRequest request) {
-        log.debug("Bad request: {}", ex.getMessage());
-        return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);
-    }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpServletRequest request) {
@@ -56,7 +46,7 @@ public class GlobalExceptionHandler {
                         error -> HtmlUtils.htmlEscape(Objects.nonNull(error.getDefaultMessage())
                                 ? error.getDefaultMessage()
                                 : "Invalid value!"),
-                        (existing, replacement) -> existing
+                        (existing, _) -> existing
                 ));
 
         ErrorResponse errorResponse = ErrorResponse.builder()
@@ -79,12 +69,6 @@ public class GlobalExceptionHandler {
         }
         log.error("File storage error: ", ex);
         return buildErrorResponse(ex, HttpStatus.INTERNAL_SERVER_ERROR, request);
-    }
-
-    @ExceptionHandler(ExternalServiceException.class)
-    public ResponseEntity<ErrorResponse> handleExternalService(ExternalServiceException ex, HttpServletRequest request) {
-        log.error("External service error: {}", ex.getMessage(), ex);
-        return buildErrorResponse(ex, HttpStatus.SERVICE_UNAVAILABLE, request);
     }
 
     @ExceptionHandler(Exception.class)
