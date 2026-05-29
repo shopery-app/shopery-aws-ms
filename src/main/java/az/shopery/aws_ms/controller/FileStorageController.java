@@ -27,7 +27,7 @@ public class FileStorageController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteFile(@RequestParam String fileKey) {
+    public ResponseEntity<Void> deleteFile(@RequestParam(required = false) String fileKey) {
         s3FileService.deleteFileIfExists(fileKey);
         return ResponseEntity.noContent().build();
     }
