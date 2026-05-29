@@ -33,7 +33,7 @@ public class FileStorageController {
     }
 
     @GetMapping("/presigned-url")
-    public ResponseEntity<String> getPresignedUrl(@RequestParam String fileKey) {
+    public ResponseEntity<String> getPresignedUrl(@RequestParam(required = false) String fileKey) {
         return ResponseEntity.ok(s3FileService.generatePresignedUrl(fileKey));
     }
 }
