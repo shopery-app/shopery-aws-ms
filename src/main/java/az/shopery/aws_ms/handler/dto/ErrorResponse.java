@@ -14,16 +14,20 @@ import org.springframework.http.HttpStatus;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ErrorResponse {
     HttpStatus status;
+
     int statusCode;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     LocalDateTime timestamp;
-    String message;
+
     String path;
+    String message;
+
     Map<String, String> errors;
 }
