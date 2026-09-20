@@ -8,6 +8,5 @@ public class AwsMsApplication {
 
 	static void main(String[] args) {
 		SpringApplication.run(AwsMsApplication.class, args);
-
 	}
 }
